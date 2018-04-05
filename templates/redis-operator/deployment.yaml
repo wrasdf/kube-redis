@@ -1,0 +1,40 @@
+{{ $config := (datasource "config") }}
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: redis-operator
+  namespace: kube-system
+  labels:
+    app: redis-operator
+    repo: kube-redis
+    deployed-with: kt
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis-operator
+      annotations:
+        iam.amazonaws.com/role: {{ $config.redisOperator.iamRole }}
+    spec:
+      serviceAccountName: redis-operator
+      containers:
+      - name: operator
+        imagePullPolicy: Always
+        image: ikerry/kube-redis-operator:0.1.0
+        env:
+          - name: AWS_REGION
+            value: "ap-southeast-2"
+          - name: REDIS_SUBNET_GROUP
+            value: {{ $config.redisOperator.subnetGroupName }}
+          - name: REDIS_SECURITY_GROUP_IDS
+            value: {{ $config.dbOperator.securityGroupIds }}
+        volumeMounts:
+          - name: ssl-certs
+            mountPath: /etc/ssl/certs/ca-certificates.crt
+            readOnly: true
+      volumes:
+        - name: ssl-certs
+          hostPath:
+            path: "/etc/ssl/certs/ca-certificates.crt"

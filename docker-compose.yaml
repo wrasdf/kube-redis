@@ -1,0 +1,26 @@
+---
+version: '2.3'
+
+services:
+  stackup:
+    image: realestate/stackup:latest
+    volumes:
+      - "$HOME/.aws:/root/.aws"
+      - ".:/app"
+    working_dir: /app
+    entrypoint: stackup
+    environment:
+      - AWS_DEFAULT_REGION=ap-southeast-2
+
+  kubectl:
+    image: lachlanevenson/k8s-kubectl:v1.9.6
+    working_dir: /app
+    volumes:
+      - ".:/ops-kube-system"
+      - "$HOME/.kube:/root/.kube"
+
+  kt:
+    image: myobplatform/kt:0.2.3
+    volumes:
+      - "$HOME/.kube:/root/.kube"
+      - ".:/app"

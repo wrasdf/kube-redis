@@ -1,0 +1,21 @@
+test-local:
+	docker run -d --name my-redis redis:4-alpine --bind 127.0.0.1
+	docker run --rm -it --network container:my-redis redis:4-alpine redis-cli -h 127.0.0.1 -p 6379
+
+docker-run:
+	docker network create -d bridge my-network
+	docker run --name redis --network=my-network -h redis -d -p 6379:6379 redis:4-alpine
+	docker run --rm -d -p 8081:8081 \
+	 --network=my-network \
+	 --name redis-commander \
+	 --env REDIS_HOSTS=local:redis:6379 \
+	  rediscommander/redis-commander:latest
+
+compose-run:
+	docker-compose -f docker-compose-redis.yaml build
+	docker-compose -f docker-compose-redis.yaml up
+
+clean:
+	docker stop $$(docker ps -aq)
+	docker rm -v $$(docker ps -aq)
+	docker network rm $$(docker network ls -q)
