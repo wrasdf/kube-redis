@@ -1,0 +1,2 @@
+# kube-redis
+redis operator
