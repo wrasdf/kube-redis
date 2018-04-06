@@ -1,0 +1,12 @@
+---
+SubnetIds: [""]
+CacheClusterId: "test-elesticache"
+ReplicationGroupId: "test"
+AZMode: "single-az"
+PreferredAvailabilityZone: "ap-southeast-2a"
+NumCacheNodes: 1
+CacheNodeType: "cache.t2.micro"
+CacheSubnetGroupName: "elastic-subnet-group"
+SecurityGroupIds: [ "sg-232e995a" ]
+Engine: "redis"
+EngineVersion: "3.2.10"

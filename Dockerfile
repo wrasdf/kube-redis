@@ -1,6 +1,6 @@
 FROM lachlanevenson/k8s-kubectl:v1.9.6 as kubectlContainer
 
-FROM python:alpine3.6
+FROM python:alpine3.7
 COPY --from=kubectlContainer /usr/local/bin/kubectl /usr/local/bin/kubectl
 
 RUN mkdir /app
