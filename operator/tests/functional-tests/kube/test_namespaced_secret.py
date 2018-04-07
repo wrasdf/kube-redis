@@ -29,6 +29,3 @@ class TestNamespacedSecretManager(unittest.TestCase):
 
     def tearDown(self):
         self.secret_manager.delete_namespaced_secret(self.secret_name)
-
-if __name__ == '__main__':
-    unittest.main()

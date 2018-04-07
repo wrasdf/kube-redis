@@ -15,7 +15,3 @@ class TestRedisManager(unittest.TestCase):
         self.assertEqual(self.redis_manager.config['namespace'], 'platform-enablement')
         self.assertEqual(self.redis_manager.config['Engine'], 'redis')
         self.assertEqual(self.redis_manager.config['EngineVersion'], '3.2.10')
-
-
-if __name__ == '__main__':
-    unittest.main()
