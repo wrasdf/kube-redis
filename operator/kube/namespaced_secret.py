@@ -1,6 +1,6 @@
 from kubernetes import client, config
 
-class SecretManager:
+class NamespacedSecretManager:
 
     def __init__(self, namespace):
         config.load_kube_config()
@@ -8,17 +8,13 @@ class SecretManager:
         self.namespace = namespace
 
     def list_namespaced_secret(self):
-        secrets = []
-        api_response = self.api.list_namespaced_secret(self.namespace).items
-        for item in api_response:
-            secrets.append(item.metadata.name)
-        return secrets
+        return self.api.list_namespaced_secret(self.namespace)
 
     def read_namespaced_secret(self, name):
         return self.api.read_namespaced_secret(name, self.namespace)
 
     def create_namespaced_secret(self, name, data):
-        self.api.create_namespaced_secret(self.namespace, client.V1Secret(
+        return self.api.create_namespaced_secret(self.namespace, client.V1Secret(
             api_version="v1",
             kind="Secret",
             metadata=client.V1ObjectMeta(name=name),
@@ -27,7 +23,7 @@ class SecretManager:
         ))
 
     def replace_namespaced_secret(self, name, data):
-        self.api.replace_namespaced_secret(name, self.namespace, client.V1Secret(
+        return self.api.replace_namespaced_secret(name, self.namespace, client.V1Secret(
             api_version="v1",
             kind="Secret",
             metadata=client.V1ObjectMeta(name=name),
@@ -36,11 +32,16 @@ class SecretManager:
         ))
 
     def delete_namespaced_secret(self, name):
-        self.api.delete_namespaced_secret(name, self.namespace, client.V1DeleteOptions())
+        return self.api.delete_namespaced_secret(name, self.namespace, client.V1DeleteOptions())
 
     def exist_namespaced_secret(self, name):
-        secrets = self.list_namespaced_secret()
-        if name in secrets:
+        secret_names = []
+        secrets = self.list_namespaced_secret().items
+
+        for item in secrets:
+            secret_names.append(item.metadata.name)
+
+        if name in secret_names:
             return True
 
         return False

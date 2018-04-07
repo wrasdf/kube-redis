@@ -3,6 +3,7 @@ apiVersion: myob.com/v1alpha1
 kind: Redis
 metadata:
   name: example-redis
+  namespace: kube-system
 spec:
   size: "cache.t2.micro"
   Shards: 1

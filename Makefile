@@ -8,4 +8,4 @@ test:
 	docker run --rm -it -v $$(pwd):/app -v $(HOME)/.kube:/root/.kube -v $(HOME)/.aws:/root/.aws kube-redis:latest green ./operator/tests
 
 test_in:
-	green ./operator/tests
+	green ./operator/tests/kube

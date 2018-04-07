@@ -5,12 +5,12 @@ metadata:
   labels:
     app: redis-operator
     repo: kube-redis
-    deployed-with: kt
   name: redis.myob.com
 spec:
   group: myob.com
   version: v1alpha1
   names:
     kind: Redis
+    listKind: RedisList
     plural: redis
   scope: Namespaced
