@@ -9,6 +9,7 @@ class TestNamespacedSecretManager(unittest.TestCase):
         self.secret_manager = NamespacedSecretManager(self.namespace)
 
     def test_create_secret(self):
+        self.assertEqual(self.secret_manager.exist_namespaced_secret(self.secret_name), False)
         self.secret_manager.create_namespaced_secret(self.secret_name, {
             "USER": "cGFzc1dvcmQxCg=="
         })
@@ -25,13 +26,6 @@ class TestNamespacedSecretManager(unittest.TestCase):
         })
         self.assertEqual(self.secret_manager.exist_namespaced_secret(self.secret_name), True)
         self.assertEqual(self.secret_manager.read_namespaced_secret(self.secret_name).data['USER'], "a2Vycnkud2FuZwo=")
-
-    def test_exist_namespaced_secret(self):
-        self.assertEqual(self.secret_manager.exist_namespaced_secret(self.secret_name), False)
-        self.secret_manager.create_namespaced_secret(self.secret_name, {
-            "USER": "cGFzc1dvcmQxCg=="
-        })
-        self.assertEqual(self.secret_manager.exist_namespaced_secret(self.secret_name), True)
 
     def tearDown(self):
         self.secret_manager.delete_namespaced_secret(self.secret_name)

@@ -18,11 +18,9 @@ class TestCustomObjectManager(unittest.TestCase):
             }
         }
 
-    def test_redis_namespaced_custom_object(self):
+    def test_redis_create_namespaced_custom_object(self):
         self.assertFalse(self.co_manager.redis_exist_namespaced_custom_object(self.namespace, self.co_name))
         self.co_manager.redis_create_namespaced_custom_object(self.namespace, self.co_test_details)
-
-        self.assertTrue(self.co_manager.redis_exist_namespaced_custom_object(self.namespace, self.co_name))
         self.assertEqual(
             self.co_manager.redis_get_namespaced_custom_object(self.namespace, self.co_name)["apiVersion"],
             self.co_test_details["apiVersion"]
@@ -31,6 +29,18 @@ class TestCustomObjectManager(unittest.TestCase):
             self.co_manager.redis_get_namespaced_custom_object(self.namespace, self.co_name)["kind"],
             self.co_test_details["kind"]
         )
+        self.assertTrue(self.co_manager.redis_exist_namespaced_custom_object(self.namespace, self.co_name))
+
+
+    def test_redis_replace_namespaced_custom_object(self):
+        self.co_manager.redis_create_namespaced_custom_object(self.namespace, self.co_test_details)
+        self.co_manager.redis_replace_namespaced_custom_object(self.namespace, self.co_name, {"status": "available"})
+        self.assertEqual(
+            self.co_manager.redis_get_namespaced_custom_object(self.namespace, self.co_name)["status"],
+            "available"
+        )
+        self.assertTrue(self.co_manager.redis_exist_namespaced_custom_object(self.namespace, self.co_name))
+
 
     def tearDown(self):
         self.co_manager.redis_delete_namespaced_custom_object(self.namespace, self.co_name)

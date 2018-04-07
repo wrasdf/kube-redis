@@ -13,7 +13,8 @@ class TestRedisManager(unittest.TestCase):
 
     def test_self_config(self):
         self.assertEqual(self.redis_manager.config['namespace'], 'platform-enablement')
-
+        self.assertEqual(self.redis_manager.config['Engine'], 'redis')
+        self.assertEqual(self.redis_manager.config['EngineVersion'], '3.2.10')
 
 
 if __name__ == '__main__':
