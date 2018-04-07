@@ -1,4 +1,4 @@
-test-local:
+docker-local:
 	docker run -d --name my-redis redis:4-alpine --bind 127.0.0.1
 	docker run --rm -it --network container:my-redis redis:4-alpine redis-cli -h 127.0.0.1 -p 6379
 
