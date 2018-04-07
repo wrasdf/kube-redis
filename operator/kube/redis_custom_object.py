@@ -1,10 +1,10 @@
-from kubernetes import client, config
+from kubernetes import client, config, watch
 
 class CustomObjectManager:
 
     def __init__(self):
         config.load_kube_config()
-        self.api = client.CustomObjectsApi()
+        self.coApi = client.CustomObjectsApi()
         self.redis_crd = {
             "group": "myob.com",
             "version": "v1alpha1",
@@ -13,25 +13,60 @@ class CustomObjectManager:
 
     # cluster based
     def redis_list_cluster_custom_object(self):
-        return self.api.list_cluster_custom_object(self.redis_crd["group"], self.redis_crd["version"], self.redis_crd["plural"])
+        return self.coApi.list_cluster_custom_object(
+            self.redis_crd["group"],
+            self.redis_crd["version"],
+            self.redis_crd["plural"]
+        )
 
     # namespace based
     def redis_list_namespaced_custom_object(self, namespace):
-        return self.api.list_namespaced_custom_object(self.redis_crd["group"], self.redis_crd["version"] ,namespace ,self.redis_crd["plural"])
+        return self.coApi.list_namespaced_custom_object(
+            self.redis_crd["group"],
+            self.redis_crd["version"],
+            namespace,
+            self.redis_crd["plural"]
+        )
 
     def redis_create_namespaced_custom_object(self, namespace, body):
-        return self.api.create_namespaced_custom_object(self.redis_crd["group"], self.redis_crd["version"] ,namespace ,self.redis_crd["plural"], body)
+        return self.coApi.create_namespaced_custom_object(
+            self.redis_crd["group"],
+            self.redis_crd["version"],
+            namespace,
+            self.redis_crd["plural"],
+            body
+        )
 
     def redis_get_namespaced_custom_object(self, namespace, name):
-        return self.api.get_namespaced_custom_object(self.redis_crd["group"], self.redis_crd["version"] ,namespace ,self.redis_crd["plural"], name)
+        return self.coApi.get_namespaced_custom_object(
+            self.redis_crd["group"],
+            self.redis_crd["version"],
+            namespace,
+            self.redis_crd["plural"],
+            name
+        )
 
     def redis_replace_namespaced_custom_object(self, namespace, name, details):
         namespaced_custom_object = self.redis_get_namespaced_custom_object(namespace, name).copy()
         namespaced_custom_object.update(details)
-        return self.api.replace_namespaced_custom_object(self.redis_crd["group"], self.redis_crd["version"] ,namespace ,self.redis_crd["plural"], name, namespaced_custom_object)
+        return self.coApi.replace_namespaced_custom_object(
+            self.redis_crd["group"],
+            self.redis_crd["version"],
+            namespace,
+            self.redis_crd["plural"],
+            name,
+            namespaced_custom_object
+        )
 
     def redis_delete_namespaced_custom_object(self, namespace, name):
-        return self.api.delete_namespaced_custom_object(self.redis_crd["group"], self.redis_crd["version"] ,namespace ,self.redis_crd["plural"], name, client.V1DeleteOptions())
+        return self.coApi.delete_namespaced_custom_object(
+            self.redis_crd["group"],
+            self.redis_crd["version"],
+            namespace,
+            self.redis_crd["plural"],
+            name,
+            client.V1DeleteOptions()
+        )
 
     def redis_exist_namespaced_custom_object(self, namespace, name):
         cos = self.redis_list_namespaced_custom_object(namespace)["items"]
@@ -44,3 +79,49 @@ class CustomObjectManager:
             return True
 
         return False
+
+#
+# {
+#   'apiVersion': 'myob.com/v1alpha1',
+#   'kind': 'Redis',
+#   'metadata':{
+#     'clusterName': '',
+#     'creationTimestamp': '2018-04-07T12:27:12Z',
+#     'deletionGracePeriodSeconds': None,
+#     'deletionTimestamp': None,
+#     'generation': 0,
+#     'name': 'test-redis',
+#     'namespace': 'platform-enablement',
+#     'resourceVersion': '6189611',
+#     'selfLink': '/apis/myob.com/v1alpha1/namespaces/platform-enablement/redis/test-redis',
+#     'uid': 'ff884332-3a5e-11e8-99df-02b2b0b2e31e'
+#   },
+#   'spec': {'size': 'cache.t2.micro'},
+#   'status': 'available'
+# }
+
+    def watch_cluster_custom_object(self, onCreated, onDeleted, onModifed):
+
+        while True:
+            stream = watch.Watch().stream(
+                self.coApi.list_cluster_custom_object,
+                self.redis_crd["group"],
+                self.redis_crd["version"],
+                self.redis_crd["plural"]
+            )
+
+            for event in stream:
+                obj = event["object"]
+                operation = event["type"]
+
+                # ADDED
+                if operation == "ADDED":
+                    onCreated(obj.get("metadata"))
+
+                # DELETED
+                if operation == "DELETED":
+                    onDeleted(obj.get("metadata"))
+
+                # Modifed
+                if operation == "MODIFIED":
+                    onModifed(obj.get("metadata"))

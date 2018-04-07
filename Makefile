@@ -7,5 +7,8 @@ sh: build
 test:
 	docker run --rm -it -v $$(pwd):/app -v $(HOME)/.kube:/root/.kube -v $(HOME)/.aws:/root/.aws kube-redis:latest green ./operator/tests/functional-tests
 
+watch_in:
+	python ./operator/run.py
+
 test_in:
 	green ./operator/tests/functional-tests
