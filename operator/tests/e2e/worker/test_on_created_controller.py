@@ -12,6 +12,10 @@ class TestOnCreatedController(unittest.TestCase):
         self.cfg_manager = NamespacedConfigMapManager(self.namespace)
         self.cfg_name = self.namespace + '-' + self.co_name
 
+        # clean env
+        if self.cfg_manager.exist_namespaced_config_map(self.cfg_name):
+            self.cfg_manager.delete_namespaced_config_map(self.cfg_name)
+
     def test_on_created_event_should_create_config_map(self):
         OnCreatedController({
             "name": self.co_name,
