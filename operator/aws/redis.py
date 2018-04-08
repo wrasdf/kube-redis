@@ -32,6 +32,8 @@ class RedisManager:
             ]
         )
 
+    def on_event_handler(self, data):
+        print('Be triggered from redis event ---> ', data)
 
     def create_cache_cluster(self):
         response = self.client.create_cache_cluster(

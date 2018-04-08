@@ -100,7 +100,7 @@ class CustomObjectManager:
 #   'status': 'available'
 # }
 
-    def watch_cluster_custom_object(self, onCreated, onDeleted, onModifed):
+    def watch_cluster_custom_object(self, onCreated, onModifed, onDeleted):
 
         while True:
             stream = watch.Watch().stream(
@@ -113,15 +113,19 @@ class CustomObjectManager:
             for event in stream:
                 obj = event["object"]
                 operation = event["type"]
+                metadata = obj.get("metadata")
+
+                if not metadata:
+                    continue
 
                 # ADDED
                 if operation == "ADDED":
-                    onCreated(obj.get("metadata"))
-
-                # DELETED
-                if operation == "DELETED":
-                    onDeleted(obj.get("metadata"))
+                    onCreated(metadata)
 
                 # Modifed
                 if operation == "MODIFIED":
-                    onModifed(obj.get("metadata"))
+                    onModifed(metadata)
+
+                # DELETED
+                if operation == "DELETED":
+                    onDeleted(metadata)
