@@ -1,5 +1,8 @@
 .PHONY: build sh test watch watch_in test_in
 
+apply:
+	@docker-compose run kubectl apply -f templates/redis-operator/crd.yaml
+
 build:
 	docker build -t kube-redis:latest .
 
@@ -16,6 +19,6 @@ watch_in:
 	python ./operator/run.py
 
 test_in:
-	green ./operator/tests/e2e/kube
-	green ./operator/tests/e2e/aws
-	green ./operator/tests/e2e/worker
+	green ./operator/e2e-tests/kube
+	green ./operator/e2e-tests/aws
+	green ./operator/e2e-tests/worker
