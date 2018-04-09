@@ -1,12 +1,15 @@
 ---
-SubnetIds: [""]
-CacheClusterId: "test-elesticache"
-ReplicationGroupId: "test"
+namespace: "platform-enablement"
+name: "elesticache-redis"
+SubnetIds: ["subnet-10460577"]
+CacheClusterId: "pe-cluster-id"
+ReplicationGroupId: "pe-group-id"
 AZMode: "single-az"
-PreferredAvailabilityZone: "ap-southeast-2a"
+PreferredAvailabilityZone: "ap-southeast-1a"
 NumCacheNodes: 1
 CacheNodeType: "cache.t2.micro"
-CacheSubnetGroupName: "elastic-subnet-group"
+CacheSubnetGroupName: "platform-enablement-test-elesticache-redis"
 SecurityGroupIds: [ "sg-232e995a" ]
 Engine: "redis"
 EngineVersion: "3.2.10"
+Port: 6379

@@ -26,6 +26,7 @@ class OnDeletedController:
         self.event_handler()
 
     def event_handler(self):
+
         if not self.cfg_manager.exist_namespaced_config_map(self.cfg_name):
             raise ValueError(self.cfg_name + ' Should exist')
 
