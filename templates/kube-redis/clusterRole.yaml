@@ -2,21 +2,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: redis-operator-role
+  name: kube-redis
   labels:
-    app: redis-operator
+    app: kube-redis
     repo: kube-redis
     deployed-with: kt
 rules:
-  - apiGroups:
-      - "myob.com"
-    resources:
-      - redis
-    verbs:
-      - get
-      - list
-      - watch
-      - update
   - apiGroups:
       - ""
     resources:
@@ -37,7 +28,6 @@ rules:
   - apiGroups:
       - ""
     resources:
-      - configmaps
       - services
     verbs:
       - get
@@ -50,5 +40,6 @@ rules:
       - ""
     resources:
       - secrets
+      - configmaps
     verbs:
       - "*"

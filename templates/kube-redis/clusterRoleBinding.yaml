@@ -2,16 +2,16 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: redis-operator-rb
+  name: kube-redis-rb
   labels:
-    app: redis-operator
+    app: kube-redis
     repo: kube-redis
     deployed-with: kt
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: redis-operator-role
+  name: kube-redis-rb
 subjects:
 - kind: ServiceAccount
-  name: redis-operator
-  namespace: kube-system
+  name: kube-redis
+  namespace: platform-enablement

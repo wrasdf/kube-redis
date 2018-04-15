@@ -1,0 +1,48 @@
+{{ $config := (datasource "config") }}
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: kube-redis
+  namespace: {{ $config.kube-redis.namespace }}
+  labels:
+    app: kube-redis
+    repo: kube-redis
+    deployed-with: kt
+spec:
+  replicas: 1
+  selector:
+    selector:
+      matchLabels:
+        app: kube-redis
+        repo: kube-redis
+  template:
+    metadata:
+      labels:
+        app: kube-redis
+        repo: kube-redis
+      annotations:
+        iam.amazonaws.com/role: {{ $config.redisOperator.iamRole }}
+    spec:
+      serviceAccountName: kube-redis
+      containers:
+      - name: redis
+        imagePullPolicy: Always
+        image: redis:4.0-alpine
+        ports:
+          - containerPort: 6379
+        volumeMounts:
+          - mountPath: /data
+            name: kube-redis
+          - mountPath: /usr/local/etc/redis/redis.conf
+            name: config
+      volumes:
+        - name: kube-redis
+          persistentVolumeClaim:
+            claimName: kube-redis
+        - name: config
+          configMap:
+            name: kube-redis
+            items:
+            - key: redis-config
+              path: redis.conf
