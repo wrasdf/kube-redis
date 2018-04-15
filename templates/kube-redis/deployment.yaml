@@ -3,10 +3,10 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: kube-redis
+  name: {{ $config.kube-redis.name }}
   namespace: {{ $config.kube-redis.namespace }}
   labels:
-    app: kube-redis
+    app: {{ $config.kube-redis.name }}
     repo: kube-redis
     deployed-with: kt
 spec:
@@ -14,35 +14,61 @@ spec:
   selector:
     selector:
       matchLabels:
-        app: kube-redis
+        app: {{ $config.kube-redis.name }}
         repo: kube-redis
   template:
     metadata:
       labels:
-        app: kube-redis
+        app: {{ $config.kube-redis.name }}
         repo: kube-redis
       annotations:
-        iam.amazonaws.com/role: {{ $config.redisOperator.iamRole }}
+        iam.amazonaws.com/role: {{ $config.kube-redis.iamRole }}
     spec:
-      serviceAccountName: kube-redis
+      serviceAccountName: {{ $config.kube-redis.name }}
+      nodeSelector:
+        failure-domain.beta.kubernetes.io/zone: {{ $config.kube-redis.pvAz }}
       containers:
       - name: redis
         imagePullPolicy: Always
         image: redis:4.0-alpine
         ports:
           - containerPort: 6379
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "redis-cli -h $(hostname) ping"
+          initialDelaySeconds: 15
+          timeoutSeconds: 5
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "redis-cli -h $(hostname) ping"
+          initialDelaySeconds: 20
+          periodSeconds: 3
+        resources:
+          limits:
+            cpu: 200m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 1Gi
         volumeMounts:
           - mountPath: /data
-            name: kube-redis
+            name: storage-volume
           - mountPath: /usr/local/etc/redis/redis.conf
-            name: config
+            name: kube-redis-config
+      terminationGracePeriodSeconds: 300
       volumes:
-        - name: kube-redis
+        - name: storage-volume
           persistentVolumeClaim:
-            claimName: kube-redis
-        - name: config
+            claimName: {{ $config.kube-redis.name }}
+        - name: kube-redis-config
           configMap:
-            name: kube-redis
+            name: {{ $config.kube-redis.name }}
             items:
             - key: redis-config
               path: redis.conf

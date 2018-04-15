@@ -4,9 +4,9 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   labels:
-    app: kube-redis
+    app: {{ $config.kube-redis.name }}
     repo: kube-redis
-  name: kube-redis
+  name: {{ $config.kube-redis.name }}
   namespace: {{ $config.kube-redis.namespace }}
 spec:
   accessModes:

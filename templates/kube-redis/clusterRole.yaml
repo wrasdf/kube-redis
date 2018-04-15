@@ -2,9 +2,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kube-redis
+  name: {{ $config.kube-redis.name }}
   labels:
-    app: kube-redis
+    app: {{ $config.kube-redis.name }}
     repo: kube-redis
     deployed-with: kt
 rules:

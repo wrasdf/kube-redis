@@ -1,12 +1,13 @@
+{{ $config := (datasource "config") }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: kube-redis
+    app: {{ $config.kube-redis.name }}
     repo: kube-redis
     deployed-with: kt
-  name: kube-redis
+  name: {{ $config.kube-redis.name }}
   namespace: {{ $config.kube-redis.namespace }}
 spec:
   ports:
@@ -15,7 +16,7 @@ spec:
       protocol: TCP
       targetPort: 9090
   selector:
-    app: kube-redis
+    app: {{ $config.kube-redis.name }}
     repo: kube-redis
     deployed-with: kt
   type: "ClusterIP"

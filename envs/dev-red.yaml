@@ -1,4 +1,5 @@
 kube-redis:
+  name: kube-redis
   iamRole: arn:aws:iam::693429498512:role/k8s/kube-redis-role-dev-red
   pvsName: kube-redis-pvs-dev-red
   namespace: platform-enablement

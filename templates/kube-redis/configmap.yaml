@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kube-redis
+  name: {{ $config.kube-redis.name }}
   namespace: {{ $config.kube-redis.namespace }}
 data:
   redis-config: |

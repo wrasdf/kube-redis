@@ -14,3 +14,4 @@ This will stand up the application on port 8081.
 
 ### Reference:
 - https://docs.giantswarm.io/guides/using-persistent-volumes-on-baremetal/
+- https://sanderp.nl/running-redis-cluster-on-kubernetes-e451bda76cad
