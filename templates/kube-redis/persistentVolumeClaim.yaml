@@ -1,0 +1,17 @@
+{{ $config := (datasource "config") }}
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  labels:
+    app: {{ $config.kubeRedis.name }}
+    repo: kube-redis
+  name: {{ $config.kubeRedis.name }}
+  namespace: {{ $config.kubeRedis.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ $config.kubeRedis.pvAz }}
+  resources:
+    requests:
+      storage: "1Gi"

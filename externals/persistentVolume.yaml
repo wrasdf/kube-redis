@@ -1,0 +1,19 @@
+{{ $config := (datasource "config") }}
+---
+apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: {{ $config.kube-redis.pvsName }}
+  spec:
+    capacity:
+      storage: 5Gi
+    accessModes:
+      - ReadWriteMany
+    persistentVolumeReclaimPolicy: Recycle
+    storageClassName: slow
+    mountOptions:
+      - hard
+      - nfsvers=4.1
+    nfs:
+      path: /k8s-storage/{{ $config.kube-redis.pvsName }}
+      server: server: nfs.storageserver.internal

@@ -1,7 +1,0 @@
-import os
-import sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../aws'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../kube'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../worker'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../utils'))

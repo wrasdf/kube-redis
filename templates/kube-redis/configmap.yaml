@@ -1,0 +1,11 @@
+{{ $config := (datasource "config") }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $config.kubeRedis.name }}
+  namespace: {{ $config.kubeRedis.namespace }}
+data:
+  redis-config: |
+    maxmemory 2mb
+    maxmemory-policy allkeys-lru

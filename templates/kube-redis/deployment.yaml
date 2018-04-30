@@ -1,0 +1,82 @@
+{{ $config := (datasource "config") }}
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ $config.kubeRedis.name }}
+  namespace: {{ $config.kubeRedis.namespace }}
+  labels:
+    app: {{ $config.kubeRedis.name }}
+    repo: kube-redis
+    deployed-with: kt
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 80%
+  selector:
+    matchLabels:
+      app: {{ $config.kubeRedis.name }}
+      repo: kube-redis
+  template:
+    metadata:
+      labels:
+        app: {{ $config.kubeRedis.name }}
+        repo: kube-redis
+    spec:
+      serviceAccountName: {{ $config.kubeRedis.name }}
+      nodeSelector:
+        failure-domain.beta.kubernetes.io/zone: {{ $config.kubeRedis.pvAz }}
+      containers:
+      - name: redis
+        imagePullPolicy: Always
+        image: redis:4.0-alpine
+        command: [ "redis-server" ]
+        args: [ "/usr/local/etc/redis/redis.conf" ]
+        ports:
+          - containerPort: 6379
+        env:
+        - name: REDIS_SENTINEL_SERVICE_HOST
+          value: "redis-sentinel"
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "redis-cli -h $(hostname) ping"
+          initialDelaySeconds: 15
+          timeoutSeconds: 5
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "redis-cli -h $(hostname) ping"
+          initialDelaySeconds: 20
+          periodSeconds: 3
+        resources:
+          limits:
+            cpu: 200m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 1Gi
+        volumeMounts:
+          - mountPath: /data
+            name: storage-volume
+          - mountPath: /usr/local/etc/redis/
+            name: kube-redis-config
+      terminationGracePeriodSeconds: 300
+      volumes:
+        - name: storage-volume
+          persistentVolumeClaim:
+            claimName: {{ $config.kubeRedis.name }}
+        - name: kube-redis-config
+          configMap:
+            name: {{ $config.kubeRedis.name }}
+            items:
+            - key: redis-config
+              path: redis.conf

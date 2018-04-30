@@ -6,6 +6,7 @@ metadata:
   namespace: platform-enablement
 spec:
   replicas: 1
+  revisionHistoryLimit: 1
   selector:
     matchLabels:
       app: redis-commander
@@ -13,14 +14,13 @@ spec:
     metadata:
       labels:
         app: redis-commander
-        tier: backend
     spec:
       containers:
       - name: redis-commander
-        image: rediscommander/redis-commander
+        image: rediscommander/redis-commander:latest
         env:
         - name: REDIS_HOSTS
-          value:
+          value: redis-instance1:kube-redis:6379
         ports:
         - name: redis-commander
           containerPort: 8081
