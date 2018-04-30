@@ -34,8 +34,13 @@ spec:
       - name: redis
         imagePullPolicy: Always
         image: redis:4.0-alpine
+        command: [ "redis-server" ]
+        args: [ "/usr/local/etc/redis/redis.conf" ]
         ports:
           - containerPort: 6379
+        env:
+        - name: REDIS_SENTINEL_SERVICE_HOST
+          value: "redis-sentinel"
         readinessProbe:
           exec:
             command:
@@ -62,7 +67,7 @@ spec:
         volumeMounts:
           - mountPath: /data
             name: storage-volume
-          - mountPath: /usr/local/etc/redis/redis.conf
+          - mountPath: /usr/local/etc/redis/
             name: kube-redis-config
       terminationGracePeriodSeconds: 300
       volumes:
