@@ -1,2 +1,35 @@
 #!/usr/bin/env bash
-### access-redis
+
+NAMESPACE=$1
+
+if [ -z "${NAMESPACE}" ]
+then
+  echo
+  echo please provide namespace
+  echo ie. ./hack/access namespace
+  echo
+  exit 1
+fi
+
+function cleanup {
+  kubectl -n $NAMESPACE delete deployment redis-commander
+}
+trap cleanup EXIT
+
+# Deploy redis-commander
+kubectl apply -f ./hack/kube-commander/deployment.yaml
+POD_NAME=$(kubectl get pods --namespace $NAMESPACE -l "app=redis-commander" -o jsonpath="{.items[0].metadata.name}")
+
+# WAIT FOR POD TO BE READY
+while true
+do
+    sleep 1
+    STATUS=`kubectl get pods $POD_NAME -o json | jq -r .status.phase`
+    echo "Waiting for pod to be ready: $STATUS ..."
+    if [[ $STATUS == *"Running"* ]]; then
+        break
+    fi
+done
+
+echo "Access on http://localhost:8081"
+kubectl --namespace $NAMESPACE port-forward $POD_NAME 8081

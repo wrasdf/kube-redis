@@ -7,11 +7,6 @@ metadata:
 spec:
   replicas: 1
   revisionHistoryLimit: 1
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 80%
   selector:
     matchLabels:
       app: redis-commander
@@ -19,7 +14,6 @@ spec:
     metadata:
       labels:
         app: redis-commander
-        tier: backend
     spec:
       containers:
       - name: redis-commander
