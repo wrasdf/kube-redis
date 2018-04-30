@@ -20,7 +20,7 @@ spec:
         image: rediscommander/redis-commander:latest
         env:
         - name: REDIS_HOSTS
-          value: kube-redis:redis:6379
+          value: redis-instance1:kube-redis:6379
         ports:
         - name: redis-commander
           containerPort: 8081
