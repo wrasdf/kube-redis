@@ -10,6 +10,7 @@ metadata:
   name: {{ $config.kubeRedis.name }}
   namespace: {{ $config.kubeRedis.namespace }}
 spec:
+  type: ClusterIP
   ports:
   - port: 6379
     targetPort: 6379
@@ -17,4 +18,3 @@ spec:
     app: {{ $config.kubeRedis.name }}
     repo: kube-redis
     deployed-with: kt
-  type: "ClusterIP"

@@ -13,3 +13,6 @@ clean:
 deploy-%: clean
 	$(dcr) kt validate -e $(env)
 	$(dcr) kt deploy -e $(env)
+
+teardown-%:
+	$(dcr) kt delete -e $(env)
