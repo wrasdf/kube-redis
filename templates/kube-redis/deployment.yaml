@@ -26,8 +26,6 @@ spec:
       labels:
         app: {{ $config.kubeRedis.name }}
         repo: kube-redis
-      annotations:
-        iam.amazonaws.com/role: {{ $config.kubeRedis.iamRole }}
     spec:
       serviceAccountName: {{ $config.kubeRedis.name }}
       nodeSelector:

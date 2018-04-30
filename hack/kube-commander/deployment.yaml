@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: redis-commander
-        image: rediscommander/redis-commander
+        image: rediscommander/redis-commander:latest
         env:
         - name: REDIS_HOSTS
           value: kube-redis:redis:6379
