@@ -3,8 +3,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ $config.kube-redis.name }}
-  namespace: {{ $config.kube-redis.namespace }}
+  name: {{ $config.kubeRedis.name }}
+  namespace: {{ $config.kubeRedis.namespace }}
 data:
   redis-config: |
     maxmemory 2mb

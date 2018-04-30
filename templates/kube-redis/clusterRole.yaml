@@ -1,10 +1,11 @@
+{{ $config := (datasource "config") }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ $config.kube-redis.name }}
+  name: {{ $config.kubeRedis.name }}
   labels:
-    app: {{ $config.kube-redis.name }}
+    app: {{ $config.kubeRedis.name }}
     repo: kube-redis
     deployed-with: kt
 rules:

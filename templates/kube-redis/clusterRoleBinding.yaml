@@ -1,17 +1,18 @@
+{{ $config := (datasource "config") }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ $config.kube-redis.name }}-rb
+  name: {{ $config.kubeRedis.name }}-rb
   labels:
-    app: {{ $config.kube-redis.name }}
+    app: {{ $config.kubeRedis.name }}
     repo: kube-redis
     deployed-with: kt
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ $config.kube-redis.name }}-rb
+  name: {{ $config.kubeRedis.name }}-rb
 subjects:
 - kind: ServiceAccount
-  name: {{ $config.kube-redis.name }}
-  namespace: {{ $config.kube-redis.namespace }}
+  name: {{ $config.kubeRedis.name }}
+  namespace: {{ $config.kubeRedis.namespace }}

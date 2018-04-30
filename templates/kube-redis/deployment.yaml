@@ -3,30 +3,35 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ $config.kube-redis.name }}
-  namespace: {{ $config.kube-redis.namespace }}
+  name: {{ $config.kubeRedis.name }}
+  namespace: {{ $config.kubeRedis.namespace }}
   labels:
-    app: {{ $config.kube-redis.name }}
+    app: {{ $config.kubeRedis.name }}
     repo: kube-redis
     deployed-with: kt
 spec:
   replicas: 1
+  revisionHistoryLimit: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 80%
   selector:
-    selector:
-      matchLabels:
-        app: {{ $config.kube-redis.name }}
-        repo: kube-redis
+    matchLabels:
+      app: {{ $config.kubeRedis.name }}
+      repo: kube-redis
   template:
     metadata:
       labels:
-        app: {{ $config.kube-redis.name }}
+        app: {{ $config.kubeRedis.name }}
         repo: kube-redis
       annotations:
-        iam.amazonaws.com/role: {{ $config.kube-redis.iamRole }}
+        iam.amazonaws.com/role: {{ $config.kubeRedis.iamRole }}
     spec:
-      serviceAccountName: {{ $config.kube-redis.name }}
+      serviceAccountName: {{ $config.kubeRedis.name }}
       nodeSelector:
-        failure-domain.beta.kubernetes.io/zone: {{ $config.kube-redis.pvAz }}
+        failure-domain.beta.kubernetes.io/zone: {{ $config.kubeRedis.pvAz }}
       containers:
       - name: redis
         imagePullPolicy: Always
@@ -65,10 +70,10 @@ spec:
       volumes:
         - name: storage-volume
           persistentVolumeClaim:
-            claimName: {{ $config.kube-redis.name }}
+            claimName: {{ $config.kubeRedis.name }}
         - name: kube-redis-config
           configMap:
-            name: {{ $config.kube-redis.name }}
+            name: {{ $config.kubeRedis.name }}
             items:
             - key: redis-config
               path: redis.conf

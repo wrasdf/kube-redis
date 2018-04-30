@@ -4,11 +4,11 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: {{ $config.kube-redis.name }}
+    app: {{ $config.kubeRedis.name }}
     repo: kube-redis
     deployed-with: kt
-  name: {{ $config.kube-redis.name }}
-  namespace: {{ $config.kube-redis.namespace }}
+  name: {{ $config.kubeRedis.name }}
+  namespace: {{ $config.kubeRedis.namespace }}
 spec:
   ports:
     - name: redis
@@ -16,7 +16,7 @@ spec:
       protocol: TCP
       targetPort: 9090
   selector:
-    app: {{ $config.kube-redis.name }}
+    app: {{ $config.kubeRedis.name }}
     repo: kube-redis
     deployed-with: kt
   type: "ClusterIP"

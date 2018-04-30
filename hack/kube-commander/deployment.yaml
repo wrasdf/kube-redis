@@ -6,6 +6,12 @@ metadata:
   namespace: platform-enablement
 spec:
   replicas: 1
+  revisionHistoryLimit: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 80%
   selector:
     matchLabels:
       app: redis-commander
@@ -20,7 +26,7 @@ spec:
         image: rediscommander/redis-commander
         env:
         - name: REDIS_HOSTS
-          value:
+          value: kube-redis:redis:6379
         ports:
         - name: redis-commander
           containerPort: 8081
